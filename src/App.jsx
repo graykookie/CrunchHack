@@ -57,6 +57,7 @@ export default function HackathonSurvivalApp() {
   const [resourceTitleDraft, setResourceTitleDraft] = useState("");
   const [resourceUrlDraft, setResourceUrlDraft] = useState("");
 
+  // Automatic Timer Calculation
   useEffect(() => {
     const calculateTime = () => {
       const startMs = new Date(startTime).getTime();
@@ -117,18 +118,30 @@ export default function HackathonSurvivalApp() {
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
             
             <div className="flex-1">
-              <div className="flex items-center gap-2 text-xs tracking-wide">
-                <div className="flex items-center gap-2 text-neutral-400">
+              <div className="flex items-center justify-between md:justify-start gap-4">
+                <div className="flex items-center gap-2 text-xs tracking-wide text-neutral-400">
                   <Terminal size={14} className="text-amber-400" />
                   <span>survival_protocol.sh</span>
                 </div>
-                <div className={`flex items-center gap-2 ${pressure.text}`}>
-                  <span>H+{hoursPassed.toFixed(2)}</span>
-                  <span className="text-neutral-600">·</span>
-                  <span>{pressure.label}</span>
+                
+                {/* Visual Timer Layout */}
+                <div className="flex items-center gap-2 text-xs">
+                  <span className="text-neutral-500">Start Time:</span>
+                  <input
+                    type="datetime-local"
+                    value={startTime}
+                    onChange={(e) => setStartTime(e.target.value)}
+                    className="bg-neutral-900 border border-neutral-800 focus:border-amber-500 outline-none px-2 py-0.5 text-neutral-300 rounded-sm"
+                  />
                 </div>
               </div>
-              <div className="mt-2 h-1.5 w-full bg-neutral-900 border border-neutral-800 overflow-hidden max-w-sm">
+              
+              <div className={`mt-2 flex items-center gap-2 text-xs tracking-wide ${pressure.text}`}>
+                <span>H+{hoursPassed.toFixed(2)} / {TOTAL_HOURS} HRS</span>
+                <span className="text-neutral-600">·</span>
+                <span>{pressure.label}</span>
+              </div>
+              <div className="mt-1 h-1.5 w-full bg-neutral-900 border border-neutral-800 overflow-hidden max-w-sm">
                 <div className={`h-full ${pressure.bar} transition-all duration-1000`} style={{ width: `${progressPct}%` }} />
               </div>
             </div>
@@ -199,8 +212,7 @@ function StepProfile({ profile, setProfile, onComplete }) {
   return (
     <div className="flex-1 flex flex-col items-center justify-center gap-6 text-center animate-in fade-in duration-500">
       <div>
-        <p className="text-amber-400 text-xs tracking-widest mb-2">[ IDENTITY.CFG ]</p>
-        <h1 className="text-2xl md:text-3xl text-neutral-100">Register Builder</h1>
+        <h1 className="text-2xl md:text-3xl text-neutral-100">Hacker Registration</h1>
       </div>
       <div className="w-full max-w-md flex flex-col gap-4 text-left">
         <div className="flex flex-col gap-1">
@@ -368,6 +380,9 @@ function StepMatrix({
 }) {
   const matrixTasks = isSolo ? ["The Happy Path (Make it work)", "The Polish (Make it look good)"] : ["The Happy Path", "The Edge Cases", "The Polish"];
 
+  // Check if all custom tasks exist and are completed
+  const isEverythingCompleted = customTasks.length > 0 && customTasks.every(t => t.isCompleted);
+
   function handleAutoSprintTasks() {
     onAddTask("Wire client state & input handlers");
     onAddTask("Implement core output display & loading state");
@@ -377,6 +392,27 @@ function StepMatrix({
 
   return (
     <div className="flex flex-col gap-8 animate-in fade-in duration-300">
+      
+      {/* SUCCESS BANNER */}
+      {isEverythingCompleted && (
+        <div className="border border-green-500/50 bg-green-500/10 p-6 flex flex-col items-center justify-center text-center animate-in zoom-in-95 duration-300 rounded-sm">
+          <h3 className="text-green-400 font-bold mb-2 flex items-center gap-2 text-lg">
+            <Check size={20} /> ALL TASKS COMPLETED
+          </h3>
+          <p className="text-sm text-green-100/90 mb-4 max-w-md">
+            Excellent work! Make sure to create and post your Devpost submission before the final deadline hits.
+          </p>
+          <a
+            href="https://shellhacks-2026.devpost.com/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-green-500 hover:bg-green-400 text-neutral-950 px-6 py-2.5 font-bold text-sm transition-colors cursor-pointer flex items-center gap-2"
+          >
+            Submit to ShellHacks 2026 <ExternalLink size={14} />
+          </a>
+        </div>
+      )}
+
       <div className="border border-amber-500/40 bg-amber-500/5 px-5 py-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <div className="flex items-center gap-2 text-amber-400 text-xs tracking-widest mb-1"><Lock size={12} /> LOCKED SCOPE</div>

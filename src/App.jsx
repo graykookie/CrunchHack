@@ -372,7 +372,104 @@ function StepIdeaLock({ ideaDraft, setIdeaDraft, onLock }) {
     </div>
   );
 }
+/* ============================================================
+   PROJECT MATRIX: System Design Architecture Blueprint
+   ============================================================ */
+function SystemDesignBlueprint() {
+  const [nodes, setNodes] = useState([
+    { id: "1", tier: "Client / Interface", name: "Responsive React / Vite PWA", role: "UI rendering & local state" },
+    { id: "2", tier: "API / Gateway", name: "Client-Side Event Router", role: "Channel routing & direct payload dispatch" },
+    { id: "3", tier: "Storage / Engine", name: "In-Memory Session Store", role: "Ephemeral roster & scope tracking" }
+  ]);
+  const [tier, setTier] = useState("Client / Interface");
+  const [name, setName] = useState("");
+  const [role, setRole] = useState("");
 
+  const TIERS = ["Client / Interface", "API / Gateway", "Compute & Engine", "Storage / DB", "External Services"];
+
+  function handleAddNode(e) {
+    e.preventDefault();
+    if (!name.trim() || !role.trim()) return;
+    setNodes(prev => [...prev, { id: genId(4), tier, name: name.trim(), role: role.trim() }]);
+    setName("");
+    setRole("");
+  }
+
+  function handleRemoveNode(id) {
+    setNodes(prev => prev.filter(n => n.id !== id));
+  }
+
+  return (
+    <section className="flex flex-col gap-4">
+      <div className="flex items-center justify-between border-b border-neutral-800 pb-2">
+        <div className="flex items-center gap-2 text-xs tracking-widest text-neutral-400">
+          <Server size={14} className="text-amber-400" />
+          SYSTEM DESIGN TOPOLOGY
+        </div>
+        <span className="text-[10px] text-amber-500 font-mono">{nodes.length} COMPONENTS ACTIVE</span>
+      </div>
+
+      {/* Form: Add Component to Topology */}
+      <form onSubmit={handleAddNode} className="grid grid-cols-1 sm:grid-cols-4 gap-2 bg-neutral-900/40 p-3 border border-neutral-800">
+        <select
+          value={tier}
+          onChange={(e) => setTier(e.target.value)}
+          className="bg-neutral-950 border border-neutral-800 focus:border-amber-500 outline-none px-2 py-1.5 text-xs text-neutral-300"
+        >
+          {TIERS.map(t => <option key={t} value={t}>{t}</option>)}
+        </select>
+        <input
+          type="text"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Service / Component Name"
+          className="bg-neutral-950 border border-neutral-800 focus:border-amber-500 outline-none px-3 py-1.5 text-xs text-neutral-100"
+        />
+        <input
+          type="text"
+          value={role}
+          onChange={(e) => setRole(e.target.value)}
+          placeholder="Role / Responsibility"
+          className="bg-neutral-950 border border-neutral-800 focus:border-amber-500 outline-none px-3 py-1.5 text-xs text-neutral-100"
+        />
+        <button
+          type="submit"
+          className="bg-neutral-800 hover:bg-amber-500 hover:text-neutral-950 text-neutral-200 text-xs px-3 py-1.5 transition-colors cursor-pointer flex items-center justify-center gap-1 font-bold"
+        >
+          <Plus size={12} /> Add Component
+        </button>
+      </form>
+
+      {/* Visual Pipeline Flow */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+        {nodes.map((node, index) => (
+          <div key={node.id} className="relative border border-neutral-800 bg-neutral-900/60 p-3.5 flex flex-col justify-between gap-2 group hover:border-amber-500/60 transition-colors">
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] text-amber-500 tracking-wider font-mono uppercase bg-amber-500/10 px-1.5 py-0.5 border border-amber-500/20">
+                {node.tier}
+              </span>
+              <button
+                onClick={() => handleRemoveNode(node.id)}
+                className="text-neutral-600 hover:text-red-400 transition-colors cursor-pointer"
+                title="Remove component"
+              >
+                <X size={12} />
+              </button>
+            </div>
+            <div>
+              <div className="text-sm text-neutral-100 font-bold tracking-tight">{node.name}</div>
+              <div className="text-xs text-neutral-400 mt-1">{node.role}</div>
+            </div>
+            <div className="text-[10px] text-neutral-600 font-mono pt-1 border-t border-neutral-800/80 flex items-center justify-between">
+              <span>NODE_0{index + 1}</span>
+              <span>SYNCED</span>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 function StepMatrix({
   isSolo, coreIdea, customTasks, taskDraft, setTaskDraft, onAddTask, onToggleTask, 
   resources, resourceTitleDraft, setResourceTitleDraft, resourceUrlDraft, setResourceUrlDraft,
@@ -444,7 +541,8 @@ function StepMatrix({
           ))}
         </ol>
       </section>
-
+      {/* System Design Blueprint Section */}
+      <SystemDesignBlueprint />
       <section>
         <h2 className="text-xs tracking-widest text-neutral-500 mb-3">WORKSPACE</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
